@@ -16,11 +16,12 @@ class QuestionInline(StackedInline):
 
 class QuestionAdmin(ModelAdmin):
     inlines = [ChoiceInline]
-    list_display = ("question_text", "course", "grade")
+    list_display = ("question_text", "lesson", "grade")
     search_fields = ("question_text",)
 
 
 class LessonAdmin(ModelAdmin):
+    inlines = [QuestionInline]
     list_display = ("title", "course")
     search_fields = ("title",)
 

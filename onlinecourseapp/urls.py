@@ -10,4 +10,14 @@ urlpatterns = [
         views.course_details,
         name="course_details",
     ),
+    path(
+        "courses/<int:course_id>/submit/",
+        views.submit,
+        name="submit",
+    ),
+    path(
+        "exam/result/",
+        views.show_exam_result,
+        name="show_exam_result",
+    ),
 ]

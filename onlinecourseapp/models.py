@@ -24,10 +24,12 @@ class Lesson(models.Model):
 
 
 class Question(models.Model):
-    course = models.ForeignKey(
-        Course,
+    lesson = models.ForeignKey(
+        Lesson,
         on_delete=models.CASCADE,
         related_name="questions",
+        null=True,
+        blank=True,
     )
     question_text = models.TextField()
     grade = models.IntegerField(default=1)

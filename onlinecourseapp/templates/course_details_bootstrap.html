@@ -9,34 +9,77 @@
         rel="stylesheet"
     >
 </head>
-<body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-9">
+<body class="bg-light">
+    <main class="container py-5">
+        <div class="card shadow-sm mx-auto" style="max-width: 900px;">
+            <div class="card-body p-4">
                 <h1 class="mb-3">{{ course.name }}</h1>
 
                 {% if course.description %}
                     <p class="lead">{{ course.description }}</p>
                 {% endif %}
 
-                <h2 class="h4 mt-4 mb-3">Lessons</h2>
+                <h2 class="h4 mt-4">Lessons</h2>
+                {% for lesson in course.lessons.all %}
+                    <section class="border rounded p-3 mb-4 bg-white">
+                        <h3 class="h5">{{ lesson.title }}</h3>
+                        <p>{{ lesson.content }}</p>
 
-                {% if course.lessons.all %}
-                    <div class="list-group">
-                        {% for lesson in course.lessons.all %}
-                            <div class="list-group-item">
-                                <h3 class="h5 mb-2">{{ lesson.title }}</h3>
-                                <p class="mb-0">{{ lesson.content }}</p>
-                            </div>
+                        {% for question in lesson.questions.all %}
+                            {% if forloop.first %}
+                                <h4 class="h6 mt-4">Mock Exam</h4>
+                            {% endif %}
                         {% empty %}
-                            <p class="text-muted">No lessons are available for this course yet.</p>
+                            <p class="text-muted">No exam questions have been added to this lesson yet.</p>
                         {% endfor %}
-                    </div>
-                {% else %}
+                    </section>
+                {% empty %}
                     <p class="text-muted">No lessons are available for this course yet.</p>
-                {% endif %}
+                {% endfor %}
+
+                <h2 class="h4 mt-4">Mock Exam</h2>
+                <form method="post" action="{% url 'onlinecourseapp:submit' course.id %}">
+                    {% csrf_token %}
+
+                    {% for lesson in course.lessons.all %}
+                        {% for question in lesson.questions.all %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <p class="fw-bold">
+                                        {{ forloop.counter }}. {{ question.question_text }}
+                                    </p>
+
+                                    {% for choice in question.choices.all %}
+                                        <div class="form-check mb-2">
+                                            <input
+                                                class="form-check-input"
+                                                type="radio"
+                                                name="choice_{{ question.id }}"
+                                                id="choice_{{ choice.id }}"
+                                                value="{{ choice.id }}"
+                                                required
+                                            >
+                                            <label
+                                                class="form-check-label"
+                                                for="choice_{{ choice.id }}"
+                                            >
+                                                {{ choice.choice_text }}
+                                            </label>
+                                        </div>
+                                    {% empty %}
+                                        <p class="text-danger">No choices have been added for this question.</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        Submit Mock Exam
+                    </button>
+                </form>
             </div>
         </div>
-    </div>
+    </main>
 </body>
 </html>
